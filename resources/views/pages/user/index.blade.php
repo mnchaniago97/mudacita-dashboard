@@ -5,7 +5,9 @@
     $roleName = auth()->check() ? (auth()->user()->role->name ?? null) : null;
     $roleNormalized = strtolower((string) $roleName);
     $roleNormalized = str_replace('_', '', $roleNormalized);
-    $canApprove = in_array($roleNormalized, ['superadmin'], true);
+    $isSuperAdmin = $roleNormalized === 'superadmin';
+    $isAdmin = $roleNormalized === 'admin';
+    $canApprove = $isSuperAdmin;
 @endphp
 <main class="nxl-container">
     <div class="nxl-content">
@@ -61,6 +63,7 @@
                                                 $statusBadge = match ($status) {
                                                     'active' => 'bg-success',
                                                     'pending' => 'bg-warning text-dark',
+                                                    'inactive' => 'bg-secondary',
                                                     'rejected' => 'bg-danger',
                                                     default => 'bg-secondary',
                                                 };
@@ -73,25 +76,35 @@
                                                 <a href="{{ route('users.show', $user) }}" class="avatar-text avatar-md">
                                                     <i class="feather-eye"></i>
                                                 </a>
-                                                @if ($canApprove && (($user->status ?? 'active') === 'pending'))
-                                                    <form action="{{ route('users.approve', $user) }}" method="POST">
-                                                        @csrf
-                                                        <button type="submit" class="avatar-text avatar-md border-0 bg-transparent text-success" title="Setujui">
-                                                            <i class="feather-check"></i>
-                                                        </button>
-                                                    </form>
-                                                    <form action="{{ route('users.reject', $user) }}" method="POST"
-                                                        onsubmit="return confirm('Tolak user ini?')">
-                                                        @csrf
-                                                        <button type="submit" class="avatar-text avatar-md border-0 bg-transparent text-danger" title="Tolak">
-                                                            <i class="feather-x"></i>
-                                                        </button>
-                                                    </form>
+                                                @if ($canApprove && (($user->role->name ?? null) !== 'super_admin'))
+                                                    @if (($user->status ?? 'active') === 'active')
+                                                        <form action="{{ route('users.deactivate', $user) }}" method="POST"
+                                                            onsubmit="return confirm('Nonaktifkan user ini?')">
+                                                            @csrf
+                                                            <button type="submit" class="avatar-text avatar-md border-0 bg-transparent text-warning" title="Nonaktifkan">
+                                                                <i class="feather-slash"></i>
+                                                            </button>
+                                                        </form>
+                                                    @else
+                                                        <form action="{{ route('users.activate', $user) }}" method="POST">
+                                                            @csrf
+                                                            <button type="submit" class="avatar-text avatar-md border-0 bg-transparent text-success" title="Aktifkan">
+                                                                <i class="feather-check"></i>
+                                                            </button>
+                                                        </form>
+                                                    @endif
                                                 @endif
-                                                <a href="{{ route('users.edit', $user) }}" class="avatar-text avatar-md">
-                                                    <i class="feather-edit"></i>
-                                                </a>
-                                                @if (($user->role->name ?? null) !== 'super_admin')
+                                                @php
+                                                    $targetRole = $user->role->name ?? null;
+                                                    $canEdit = $isSuperAdmin || ($isAdmin && $targetRole !== 'super_admin') || auth()->id() === $user->id;
+                                                    $canDelete = ($isSuperAdmin || ($isAdmin && $targetRole !== 'super_admin')) && auth()->id() !== $user->id;
+                                                @endphp
+                                                @if ($canEdit)
+                                                    <a href="{{ route('users.edit', $user) }}" class="avatar-text avatar-md">
+                                                        <i class="feather-edit"></i>
+                                                    </a>
+                                                @endif
+                                                @if ($canDelete)
                                                     <form action="{{ route('users.destroy', $user) }}" method="POST"
                                                         onsubmit="return confirm('Hapus user ini?')">
                                                         @csrf

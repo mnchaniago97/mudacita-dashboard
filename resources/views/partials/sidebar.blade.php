@@ -82,6 +82,12 @@
                                 <span class="nxl-mtext">Pengurus</span>
                             </a>
                         </li>
+                        <li class="nxl-item">
+                            <a href="{{ route('sdm.management-performance.index') }}" class="nxl-link">
+                                <span class="nxl-micon"><i class="feather-bar-chart-2"></i></span>
+                                <span class="nxl-mtext">Kinerja Pengurus</span>
+                            </a>
+                        </li>
 
                         <li class="nxl-item">
                             <a href="/sdm/volunteers" class="nxl-link">

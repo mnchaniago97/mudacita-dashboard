@@ -13,7 +13,18 @@ class UserController extends Controller
 {
     public function index()
     {
-        $users = User::with('role')->orderBy('name')->paginate(10);
+        $role = auth()->user()->role->name ?? null;
+        $normalized = strtolower((string) $role);
+        $normalized = str_replace('_', '', $normalized);
+
+        if (in_array($normalized, ['superadmin', 'admin'], true)) {
+            $users = User::with('role')->orderBy('name')->paginate(10);
+        } else {
+            $users = User::with('role')
+                ->where('id', auth()->id())
+                ->orderBy('name')
+                ->paginate(10);
+        }
 
         return view('pages.user.index', compact('users'));
     }
@@ -54,6 +65,10 @@ class UserController extends Controller
 
     public function edit(User $user)
     {
+        if (!$this->canManageUser(auth()->user(), $user)) {
+            abort(403);
+        }
+
         $roles = Role::orderBy('name')->get();
 
         return view('pages.user.edit', compact('user', 'roles'));
@@ -61,6 +76,10 @@ class UserController extends Controller
 
     public function update(Request $request, User $user)
     {
+        if (!$this->canManageUser($request->user(), $user)) {
+            abort(403);
+        }
+
         $request->validate([
             'name' => 'required|string',
             'email' => 'required|email|unique:users,email,' . $user->id,
@@ -113,8 +132,48 @@ class UserController extends Controller
         return back()->with('success', 'User berhasil ditolak.');
     }
 
+    public function activate(User $user, Request $request)
+    {
+        if (!$this->isAdminUser($request->user())) {
+            abort(403);
+        }
+
+        if (($user->role->name ?? null) === 'super_admin') {
+            return back()->with('error', 'Akun super admin tidak dapat dinonaktifkan.');
+        }
+
+        $user->status = 'active';
+        $user->save();
+
+        return back()->with('success', 'Akun user berhasil diaktifkan.');
+    }
+
+    public function deactivate(User $user, Request $request)
+    {
+        if (!$this->isAdminUser($request->user())) {
+            abort(403);
+        }
+
+        if (($user->role->name ?? null) === 'super_admin') {
+            return back()->with('error', 'Akun super admin tidak dapat dinonaktifkan.');
+        }
+
+        if (Auth::id() === $user->id) {
+            return back()->with('error', 'Tidak bisa menonaktifkan akun yang sedang digunakan.');
+        }
+
+        $user->status = 'inactive';
+        $user->save();
+
+        return back()->with('success', 'Akun user berhasil dinonaktifkan.');
+    }
+
     public function destroy(User $user)
     {
+        if (!$this->canDeleteUser(auth()->user(), $user)) {
+            abort(403);
+        }
+
         if (($user->role->name ?? null) === 'super_admin') {
             return back()->with('error', 'Akun super admin tidak bisa dihapus.');
         }
@@ -136,5 +195,56 @@ class UserController extends Controller
 
         return in_array($normalized, ['superadmin'], true);
     }
-}
 
+    private function isSuperAdminUser(?User $user): bool
+    {
+        $role = $user?->role->name ?? null;
+        $normalized = strtolower((string) $role);
+        $normalized = str_replace('_', '', $normalized);
+
+        return $normalized === 'superadmin';
+    }
+
+    private function isAdminRole(?User $user): bool
+    {
+        $role = $user?->role->name ?? null;
+        $normalized = strtolower((string) $role);
+        $normalized = str_replace('_', '', $normalized);
+
+        return $normalized === 'admin';
+    }
+
+    private function canManageUser(?User $actor, User $target): bool
+    {
+        if (!$actor) {
+            return false;
+        }
+
+        if ($this->isSuperAdminUser($actor)) {
+            return true;
+        }
+
+        if ($this->isAdminRole($actor)) {
+            return ($target->role->name ?? null) !== 'super_admin';
+        }
+
+        return $actor->id === $target->id;
+    }
+
+    private function canDeleteUser(?User $actor, User $target): bool
+    {
+        if (!$actor) {
+            return false;
+        }
+
+        if ($this->isSuperAdminUser($actor)) {
+            return true;
+        }
+
+        if ($this->isAdminRole($actor)) {
+            return ($target->role->name ?? null) !== 'super_admin';
+        }
+
+        return false;
+    }
+}

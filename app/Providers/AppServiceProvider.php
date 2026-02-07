@@ -7,6 +7,7 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Database\QueryException;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -23,7 +24,15 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        if (!Schema::hasTable('settings')) {
+        try {
+            if (!Schema::hasTable('settings')) {
+                View::share('appSettings', null);
+                View::share('authRole', null);
+                View::share('isAdmin', false);
+                return;
+            }
+        } catch (QueryException $e) {
+            // DB might be down or misconfigured; keep the app booting.
             View::share('appSettings', null);
             View::share('authRole', null);
             View::share('isAdmin', false);
