@@ -26,26 +26,31 @@ Route::domain('app.' . env('DASHBOARD_DOMAIN', 'mudacita.or.id'))->group(functio
 });
 
 // Routes untuk domain utama (public website) - mudacita.or.id
-Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
-Route::post('/login', [LoginController::class, 'login'])->name('login.process');
-Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
-Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
-Route::post('/register', [RegisterController::class, 'register'])->name('register.process');
+// Scoped to main domain only to prevent access from subdomains
+Route::domain(env('DASHBOARD_DOMAIN', 'mudacita.or.id'))->group(function () {
 
-Route::get('/', function () {
-    $appSettings = \App\Models\Setting::first();
-    return view('public.home', compact('appSettings'));
-})->name('home');
+    // Auth Routes
+    Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
+    Route::post('/login', [LoginController::class, 'login'])->name('login.process');
+    Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+    Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
+    Route::post('/register', [RegisterController::class, 'register'])->name('register.process');
 
-Route::get('/tentang', function () {
-    $appSettings = \App\Models\Setting::first();
-    return view('public.about', compact('appSettings'));
-})->name('about');
+    // Public Pages
+    Route::get('/', function () {
+        $appSettings = \App\Models\Setting::first();
+        return view('public.home', compact('appSettings'));
+    })->name('home');
 
-Route::get('/program', function () {
-    $appSettings = \App\Models\Setting::first();
-    return view('public.program', compact('appSettings'));
-})->name('program');
+    Route::get('/tentang', function () {
+        $appSettings = \App\Models\Setting::first();
+        return view('public.about', compact('appSettings'));
+    })->name('about');
+
+    Route::get('/program', function () {
+        $appSettings = \App\Models\Setting::first();
+        return view('public.program', compact('appSettings'));
+    })->name('program');
 
 // Program detail public pages
 Route::get('/program/{type}', function ($type) {
@@ -201,5 +206,7 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/pilar-program/{program}', [ProgramController::class, 'destroy'])->name('pilar.destroy');
 
     Route::resource('activity', ActivityController::class);
+
+});
 
 });
