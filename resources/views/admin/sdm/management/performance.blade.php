@@ -194,7 +194,7 @@
                     <div class="col-12 col-lg-4">
                         <div class="h-100">
                             @if ($isSuperAdmin)
-                                @include('sdm.management._performance-form')
+                                @include('admin.sdm.management._performance-form')
                             @else
                                 <div class="card border-0 shadow-sm h-100">
                                     <div class="card-header">

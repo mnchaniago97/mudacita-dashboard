@@ -20,7 +20,7 @@
             <div class="main-content">
                 <div class="row g-3">
                     <div class="col-12 col-lg-6">
-                        @include('sdm.management._performance-form', [
+                        @include('admin.sdm.management._performance-form', [
                             'formAction' => route('sdm.management-performance.update', $staffPerformance),
                             'formMethod' => 'PUT',
                             'submitLabel' => 'Update Skor',
