@@ -13,44 +13,32 @@ use App\Http\Controllers\Impact\ImpactController;
 
 /*
 |--------------------------------------------------------------------------
-| Domain-Based Routing Configuration
+| Web Routes
 |--------------------------------------------------------------------------
-| Konfigurasi untuk memisahkan akses berdasarkan subdomain:
-| - mudacita.or.id (domain utama) -> Website Publik
-| - app.mudacita.or.id -> Dashboard Admin
 */
 
-// Subdomain routing untuk dashboard (app.mudacita.or.id)
-Route::domain('app.' . env('DASHBOARD_DOMAIN', 'mudacita.or.id'))->group(function () {
-    require __DIR__.'/dashboard.php';
-});
+// Auth Routes
+Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
+Route::post('/login', [LoginController::class, 'login'])->name('login.process');
+Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
+Route::post('/register', [RegisterController::class, 'register'])->name('register.process');
 
-// Routes untuk domain utama (public website) - mudacita.or.id
-// Scoped to main domain only to prevent access from subdomains
-Route::domain(env('DASHBOARD_DOMAIN', 'mudacita.or.id'))->group(function () {
+// Public Pages
+Route::get('/', function () {
+    $appSettings = \App\Models\Setting::first();
+    return view('public.home', compact('appSettings'));
+})->name('home');
 
-    // Auth Routes
-    Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
-    Route::post('/login', [LoginController::class, 'login'])->name('login.process');
-    Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
-    Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
-    Route::post('/register', [RegisterController::class, 'register'])->name('register.process');
+Route::get('/tentang', function () {
+    $appSettings = \App\Models\Setting::first();
+    return view('public.about', compact('appSettings'));
+})->name('about');
 
-    // Public Pages
-    Route::get('/', function () {
-        $appSettings = \App\Models\Setting::first();
-        return view('public.home', compact('appSettings'));
-    })->name('home');
-
-    Route::get('/tentang', function () {
-        $appSettings = \App\Models\Setting::first();
-        return view('public.about', compact('appSettings'));
-    })->name('about');
-
-    Route::get('/program', function () {
-        $appSettings = \App\Models\Setting::first();
-        return view('public.program', compact('appSettings'));
-    })->name('program');
+Route::get('/program', function () {
+    $appSettings = \App\Models\Setting::first();
+    return view('public.program', compact('appSettings'));
+})->name('program');
 
 // Program detail public pages
 Route::get('/program/{type}', function ($type) {
@@ -206,7 +194,5 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/pilar-program/{program}', [ProgramController::class, 'destroy'])->name('pilar.destroy');
 
     Route::resource('activity', ActivityController::class);
-
-});
 
 });
