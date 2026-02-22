@@ -13,14 +13,14 @@ class CollaborationController extends Controller
     {
         $collaborations = Collaboration::with('program')->orderByDesc('id')->paginate(10);
 
-        return view('pages.collaboration.index', compact('collaborations'));
+        return view('admin.pages.collaboration.index', compact('collaborations'));
     }
 
     public function create()
     {
         $programs = Program::orderBy('name')->get();
 
-        return view('pages.collaboration.create', compact('programs'));
+        return view('admin.pages.collaboration.create', compact('programs'));
     }
 
     public function store(Request $request)
@@ -36,14 +36,14 @@ class CollaborationController extends Controller
     {
         $collaboration->load('program');
 
-        return view('pages.collaboration.show', compact('collaboration'));
+        return view('admin.pages.collaboration.show', compact('collaboration'));
     }
 
     public function edit(Collaboration $collaboration)
     {
         $programs = Program::orderBy('name')->get();
 
-        return view('pages.collaboration.edit', compact('collaboration', 'programs'));
+        return view('admin.pages.collaboration.edit', compact('collaboration', 'programs'));
     }
 
     public function update(Request $request, Collaboration $collaboration)

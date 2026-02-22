@@ -25,7 +25,7 @@ class SettingsController extends Controller
             ]);
         }
 
-        return view('pages.settings.index', [
+        return view('admin.pages.settings.index', [
             'settings' => $settings,
             'user' => Auth::user(),
         ]);

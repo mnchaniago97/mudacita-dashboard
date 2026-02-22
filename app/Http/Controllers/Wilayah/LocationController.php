@@ -10,7 +10,7 @@ class LocationController extends Controller
 {
     public function index()
     {
-        return view('wilayah.index', [
+        return view('admin.wilayah.index', [
             'locations' => Location::with('children.children')->get()
         ]);
     }
@@ -37,7 +37,7 @@ class LocationController extends Controller
 
     public function edit(Location $location)
     {
-        return view('wilayah.edit', compact('location'));
+        return view('admin.wilayah.edit', compact('location'));
     }
 
     public function update(Request $request, Location $location)

@@ -10,7 +10,7 @@ class EventController extends Controller
     // Untuk Halaman List/Data Table
     public function index() {
         $events = Event::orderBy('event_date', 'desc')->get();
-        return view('pages.events.index', compact('events'));
+        return view('admin.pages.events.index', compact('events'));
     }
 
     // API untuk TUI Calendar

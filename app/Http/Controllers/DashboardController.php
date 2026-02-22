@@ -45,7 +45,7 @@ class DashboardController extends Controller
         'completed' => Activity::where('status', 'completed')->count(),
     ];
 
-    return view('dashboard.index', [
+    return view('admin.dashboard.index', [
         'totalVolunteer' => $totalVolunteer,
         'totalManagement' => $totalManagement,
         'totalProgram' => $totalProgram,

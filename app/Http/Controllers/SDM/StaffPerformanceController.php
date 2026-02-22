@@ -37,7 +37,7 @@ class StaffPerformanceController extends Controller
             });
             $staffPerformanceRows = collect();
 
-            return view('sdm.management.performance', [
+            return view('admin.sdm.management.performance', [
                 'staffPerformance' => $staffPerformanceSummary,
                 'staffPerformanceRows' => $staffPerformanceRows,
                 'managementList' => $managementList,
@@ -152,7 +152,7 @@ class StaffPerformanceController extends Controller
                 ];
             });
 
-        return view('sdm.management.performance', [
+        return view('admin.sdm.management.performance', [
             'staffPerformance' => $staffPerformanceSummary,
             'staffPerformanceRows' => $staffPerformanceRows,
             'managementList' => $managementList,
@@ -217,7 +217,7 @@ class StaffPerformanceController extends Controller
     {
         $managementList = Management::orderBy('name')->get(['id', 'name', 'jabatan']);
 
-        return view('sdm.management.performance-edit', [
+        return view('admin.sdm.management.performance-edit', [
             'staffPerformance' => $staffPerformance,
             'managementList' => $managementList,
         ]);

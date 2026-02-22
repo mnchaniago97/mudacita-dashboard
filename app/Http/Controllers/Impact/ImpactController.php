@@ -34,7 +34,7 @@ class ImpactController extends Controller
             ];
         });
 
-        return view('pages.impact.index', [
+        return view('admin.pages.impact.index', [
             'reports' => Report::with('author')->latest()->get(),
             'totalProgram' => Program::count(),
             'totalActivity' => Activity::count(),

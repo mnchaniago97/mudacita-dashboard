@@ -12,6 +12,7 @@ use App\Http\Controllers\Laporan\ReportController;
 use App\Http\Controllers\User\UserController;
 use App\Http\Controllers\Settings\SettingsController;
 use App\Http\Controllers\Collaboration\CollaborationController;
+use App\Http\Controllers\Content\ContentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -25,8 +26,11 @@ Route::middleware(['auth'])->group(function () {
     | DASHBOARD
     |--------------------------------------------------------------------------
     */
-    Route::get('/dashboard', [DashboardController::class, 'index'])
+    Route::get('/admin', [DashboardController::class, 'index'])
         ->name('dashboard');
+    
+    Route::get('/dashboard', [DashboardController::class, 'index'])
+        ->name('dashboard_alt');
 
     /*
     |--------------------------------------------------------------------------
@@ -124,4 +128,52 @@ Route::middleware(['auth'])->group(function () {
     Route::post('settings/notification', [SettingsController::class, 'updateNotification'])->name('settings.notification');
     Route::post('settings/system', [SettingsController::class, 'updateSystem'])->name('settings.system');
     Route::post('settings/home', [SettingsController::class, 'updateHome'])->name('settings.home');
+
+    /*
+    |--------------------------------------------------------------------------
+    | KONTEN WEBSITE MODULE
+    |--------------------------------------------------------------------------
+    */
+    Route::prefix('content')
+        ->name('content.')
+        ->group(function () {
+            Route::get('/', [ContentController::class, 'index'])->name('index');
+            Route::get('/home', [ContentController::class, 'showHome'])->name('home.show');
+            Route::get('/home/edit', [ContentController::class, 'editHome'])->name('home.edit');
+            Route::post('/home', [ContentController::class, 'updateHome'])->name('home.update');
+            Route::get('/tentang', [ContentController::class, 'showTentang'])->name('tentang.show');
+            Route::get('/tentang/edit', [ContentController::class, 'editTentang'])->name('tentang.edit');
+            Route::post('/tentang', [ContentController::class, 'updateTentang'])->name('tentang.update');
+            Route::get('/program/{type?}/show', [ContentController::class, 'showProgram'])->name('program.show');
+            Route::get('/program/{type?}', [ContentController::class, 'editProgram'])->name('program.edit');
+            Route::post('/program/{type}', [ContentController::class, 'updateProgram'])->name('program.update');
+            Route::get('/news/show', [ContentController::class, 'showNews'])->name('news.show');
+            Route::get('/news', [ContentController::class, 'editNews'])->name('news.edit');
+            Route::post('/news', [ContentController::class, 'updateNews'])->name('news.update');
+            Route::get('/kontak', [ContentController::class, 'showKontak'])->name('kontak.show');
+            Route::get('/kontak/edit', [ContentController::class, 'editKontak'])->name('kontak.edit');
+            Route::post('/kontak', [ContentController::class, 'updateKontak'])->name('kontak.update');
+        });
+
+    /*
+    |--------------------------------------------------------------------------
+    | NEWS MODULE
+    |--------------------------------------------------------------------------
+    */
+    Route::prefix('manage/news')->name('news.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\News\NewsController::class, 'index'])->name('index');
+        Route::get('/create', [\App\Http\Controllers\News\NewsController::class, 'create'])->name('create');
+        Route::post('/', [\App\Http\Controllers\News\NewsController::class, 'store'])->name('store');
+        Route::get('/{news}/edit', [\App\Http\Controllers\News\NewsController::class, 'edit'])->name('edit');
+        Route::put('/{news}', [\App\Http\Controllers\News\NewsController::class, 'update'])->name('update');
+        Route::delete('/{news}', [\App\Http\Controllers\News\NewsController::class, 'destroy'])->name('destroy');
+
+        // Categories
+        Route::get('/categories', [\App\Http\Controllers\News\NewsController::class, 'categoriesIndex'])->name('categories.index');
+        Route::get('/categories/create', [\App\Http\Controllers\News\NewsController::class, 'categoriesCreate'])->name('categories.create');
+        Route::post('/categories', [\App\Http\Controllers\News\NewsController::class, 'categoriesStore'])->name('categories.store');
+        Route::get('/categories/{category}/edit', [\App\Http\Controllers\News\NewsController::class, 'categoriesEdit'])->name('categories.edit');
+        Route::put('/categories/{category}', [\App\Http\Controllers\News\NewsController::class, 'categoriesUpdate'])->name('categories.update');
+        Route::delete('/categories/{category}', [\App\Http\Controllers\News\NewsController::class, 'categoriesDestroy'])->name('categories.destroy');
+    });
 });

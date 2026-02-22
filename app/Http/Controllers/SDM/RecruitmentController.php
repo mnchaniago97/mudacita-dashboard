@@ -15,12 +15,12 @@ class RecruitmentController extends Controller
     {
         $recruitments = Recruitment::latest()->paginate(10);
 
-        return view('sdm.recruitment.index', compact('recruitments'));
+        return view('admin.sdm.recruitment.index', compact('recruitments'));
     }
 
     public function create()
     {
-        return view('sdm.recruitment.create');
+        return view('admin.sdm.recruitment.create');
     }
 
     public function store(Request $request)
@@ -77,12 +77,12 @@ class RecruitmentController extends Controller
 
     public function edit(Recruitment $recruitment)
     {
-        return view('sdm.recruitment.edit', compact('recruitment'));
+        return view('admin.sdm.recruitment.edit', compact('recruitment'));
     }
 
     public function show(Recruitment $recruitment)
     {
-        return view('sdm.recruitment.show', compact('recruitment'));
+        return view('admin.sdm.recruitment.show', compact('recruitment'));
     }
 
     public function update(Request $request, Recruitment $recruitment)

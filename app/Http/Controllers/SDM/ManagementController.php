@@ -17,7 +17,7 @@ class ManagementController extends Controller
         $activeManagement   = Management::where('status', 'active')->count();
         $inactiveManagement = Management::where('status', 'inactive')->count();
 
-        return view('sdm.management.index', compact(
+        return view('admin.sdm.management.index', compact(
             'managements',
             'totalManagement',
             'activeManagement',
@@ -28,7 +28,7 @@ class ManagementController extends Controller
 
     public function create()
     {
-        return view('sdm.management.create');
+        return view('admin.sdm.management.create');
     }
 
     public function store(Request $request)
@@ -67,7 +67,7 @@ class ManagementController extends Controller
 
     public function edit(Management $management)
     {
-        return view('sdm.management.edit', compact('management'));
+        return view('admin.sdm.management.edit', compact('management'));
     }
 
     public function update(Request $request, Management $management)

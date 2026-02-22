@@ -26,14 +26,14 @@ class UserController extends Controller
                 ->paginate(10);
         }
 
-        return view('pages.user.index', compact('users'));
+        return view('admin.pages.user.index', compact('users'));
     }
 
     public function create()
     {
         $roles = Role::orderBy('name')->get();
 
-        return view('pages.user.create', compact('roles'));
+        return view('admin.pages.user.create', compact('roles'));
     }
 
     public function store(Request $request)
@@ -60,7 +60,7 @@ class UserController extends Controller
     {
         $user->load('role');
 
-        return view('pages.user.show', compact('user'));
+        return view('admin.pages.user.show', compact('user'));
     }
 
     public function edit(User $user)
@@ -71,7 +71,7 @@ class UserController extends Controller
 
         $roles = Role::orderBy('name')->get();
 
-        return view('pages.user.edit', compact('user', 'roles'));
+        return view('admin.pages.user.edit', compact('user', 'roles'));
     }
 
     public function update(Request $request, User $user)

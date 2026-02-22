@@ -28,15 +28,24 @@ class ActivityController extends Controller
 
         $activities = $activitiesQuery->latest()->get();
 
-        return view('pages.activity.index', compact('activities', 'pilar'));
+        return view('admin.activity.index', compact('activities', 'pilar'));
     }
 
     // Tampilkan form create
     public function create()
     {
-        $programs = Program::all();
+        $pilar = request()->query('pilar');
+        $validPilar = ['pendidikan', 'sosial', 'lingkungan', 'digital'];
+
+        $programsQuery = Program::query();
+        if ($pilar && in_array($pilar, $validPilar, true)) {
+            $programsQuery->where('pilar', $pilar);
+        }
+
+        $programs = $programsQuery->get();
         $locations = Location::all();
-        return view('pages.activity.create', compact('programs', 'locations'));
+        $selectedProgramId = request()->query('program_id');
+        return view('admin.activity.create', compact('programs', 'locations', 'selectedProgramId', 'pilar'));
     }
 
     // Detail activity
@@ -44,7 +53,7 @@ class ActivityController extends Controller
     {
         $activity->load(['program', 'location']);
 
-        return view('pages.activity.detail', compact('activity'));
+        return view('admin.activity.detail', compact('activity'));
     }
 
     // Simpan activity baru
@@ -80,7 +89,7 @@ class ActivityController extends Controller
     {
         $programs = Program::all();
         $locations = Location::all();
-        return view('pages.activity.edit', compact('activity', 'programs', 'locations'));
+        return view('admin.activity.edit', compact('activity', 'programs', 'locations'));
     }
 
     // Update activity
@@ -122,5 +131,31 @@ class ActivityController extends Controller
         }
         $activity->delete();
         return back()->with('success', 'Activity dihapus');
+    }
+
+    // Public list by pilar
+    public function publicIndex($type)
+    {
+        $validPilar = ['pendidikan', 'sosial', 'lingkungan', 'digital'];
+        if (!in_array($type, $validPilar, true)) {
+            abort(404);
+        }
+
+        $appSettings = \App\Models\Setting::first();
+        $activities = Activity::with(['program', 'location'])
+            ->whereHas('program', fn($q) => $q->where('pilar', $type))
+            ->latest()
+            ->paginate(9);
+
+        return view('public.activities.index', compact('appSettings', 'activities', 'type'));
+    }
+
+    // Public detail
+    public function publicShow(Activity $activity)
+    {
+        $activity->load(['program', 'location']);
+        $appSettings = \App\Models\Setting::first();
+
+        return view('public.activities.detail', compact('appSettings', 'activity'));
     }
 }

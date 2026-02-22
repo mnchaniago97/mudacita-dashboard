@@ -37,7 +37,7 @@ class ReportController extends Controller
             ];
         });
 
-        return view('pages.report.index', [
+        return view('admin.pages.report.index', [
             'reports' => Report::with('author')->get(),
             'totalProgram' => Program::count(),
             'programByPilar' => [

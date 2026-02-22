@@ -31,7 +31,7 @@ class ProgramController extends Controller
             ->latest()
             ->get();
 
-        return view('pages.program.index', [
+        return view('admin.pages.program.index', [
             'programs' => $programs,
             'currentPilar' => $pilar,
             'tabData' => $tabData,
@@ -45,7 +45,7 @@ class ProgramController extends Controller
         // Ini mendukung keinginan Anda untuk melihat banyak item event di satu halaman
         $program->load(['activities.location']);
 
-        return view('pilar.program.show', [
+        return view('admin.pilar.program.show', [
             'program' => $program,
             'activities' => $program->activities
         ]);
@@ -54,7 +54,7 @@ class ProgramController extends Controller
 public function create()
 {
     // Titik (.) digunakan sebagai pengganti slash (/) untuk folder
-    return view('pages.program.create'); 
+    return view('admin.pages.program.create'); 
 }
     public function store(Request $request)
     {
@@ -73,7 +73,7 @@ public function create()
 
     public function edit(Program $program)
     {
-        return view('pages.program.edit', compact('program'));
+        return view('admin.pages.program.edit', compact('program'));
     }
 
     public function update(Request $request, Program $program)

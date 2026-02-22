@@ -20,7 +20,7 @@ class VolunteerController extends Controller
     $inactiveVolunteer = Volunteer::where('status', 'inactive')->count();
     $newVolunteer = Volunteer::whereDate('created_at', '>=', now()->subDays(30))->count();
 
-    return view('sdm.volunteer.index', compact(
+    return view('admin.sdm.volunteer.index', compact(
         'volunteers',
         'totalVolunteer',
         'activeVolunteer',
@@ -34,7 +34,7 @@ class VolunteerController extends Controller
     $users = User::orderBy('name')->get();
     $locations = Location::orderBy('name')->get();
 
-    return view('sdm.volunteer.create', compact('users', 'locations'));
+    return view('admin.sdm.volunteer.create', compact('users', 'locations'));
 }
 
 public function store(Request $request)
@@ -63,7 +63,7 @@ public function store(Request $request)
 
     public function edit(Volunteer $volunteer)
     {
-        return view('sdm.volunteer.edit', compact('volunteer'));
+        return view('admin.sdm.volunteer.edit', compact('volunteer'));
     }
 
     public function update(Request $request, Volunteer $volunteer)

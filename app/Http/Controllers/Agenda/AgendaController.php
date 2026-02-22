@@ -44,12 +44,12 @@ class AgendaController extends Controller
             ];
         });
 
-        return view('pages.agenda.index', compact('events', 'calendarSchedules'));
+        return view('admin.agenda.index', compact('events', 'calendarSchedules'));
     }
 
     public function create()
     {
-        return view('pages.agenda.create');
+        return view('admin.agenda.create');
     }
 
     public function store(Request $request)
@@ -76,12 +76,12 @@ class AgendaController extends Controller
 
     public function show(Agenda $agenda)
     {
-        return view('pages.agenda.show', compact('agenda'));
+        return view('admin.agenda.show', compact('agenda'));
     }
 
     public function edit(Agenda $agenda)
     {
-        return view('pages.agenda.edit', compact('agenda'));
+        return view('admin.agenda.edit', compact('agenda'));
     }
 
     public function update(Request $request, Agenda $agenda)

@@ -15,12 +15,12 @@ class VolunteerRecruitmentController extends Controller
     {
         $volunteerRecruitments = VolunteerRecruitment::latest()->paginate(10);
 
-        return view('sdm.volunteer-recruitment.index', compact('volunteerRecruitments'));
+        return view('admin.sdm.volunteer-recruitment.index', compact('volunteerRecruitments'));
     }
 
     public function create()
     {
-        return view('sdm.volunteer-recruitment.create');
+        return view('admin.sdm.volunteer-recruitment.create');
     }
 
     public function store(Request $request)
@@ -79,12 +79,12 @@ class VolunteerRecruitmentController extends Controller
 
     public function show(VolunteerRecruitment $volunteerRecruitment)
     {
-        return view('sdm.volunteer-recruitment.show', compact('volunteerRecruitment'));
+        return view('admin.sdm.volunteer-recruitment.show', compact('volunteerRecruitment'));
     }
 
     public function edit(VolunteerRecruitment $volunteerRecruitment)
     {
-        return view('sdm.volunteer-recruitment.edit', compact('volunteerRecruitment'));
+        return view('admin.sdm.volunteer-recruitment.edit', compact('volunteerRecruitment'));
     }
 
     public function update(Request $request, VolunteerRecruitment $volunteerRecruitment)
