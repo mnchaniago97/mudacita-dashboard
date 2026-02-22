@@ -14,6 +14,7 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             LocationSeeder::class,
             ProgramSeeder::class,
+            SettingsSeeder::class,
         ]);
     }
 }
