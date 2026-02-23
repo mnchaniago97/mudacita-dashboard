@@ -6,8 +6,8 @@
 @section('header-content')
     <!-- Page Header -->
     <div class="text-center page-hero position-relative" style="z-index: 5;">
-        <h1 class="hero-title text-white mb-5" style="font-size: 4rem; letter-spacing: -0.02em;">{{ $appSettings->news_hero_title ?? 'Berita & Artikel' }}</h1>
-        <p class="text-white opacity-75" style="font-size: 1.2rem; max-width: 600px; margin: 0 auto;">
+        <h1 class="hero-title text-white mb-5" style="font-size: clamp(1.8rem, 8vw, 4rem); letter-spacing: -0.02em;">{{ $appSettings->news_hero_title ?? 'Berita & Artikel' }}</h1>
+        <p class="text-white opacity-75" style="font-size: clamp(0.9rem, 3vw, 1.2rem); max-width: 600px; margin: 0 auto;">
             {{ $appSettings->news_hero_subtitle ?? 'Informasi terkini tentang kegiatan, program, dan informasi menarik dari Muda Cita Indonesia.' }}
         </p>
     </div>

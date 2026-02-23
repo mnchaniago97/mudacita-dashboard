@@ -6,8 +6,8 @@
 @section('header-content')
     <!-- Page Header -->
     <div class="text-center program-hero position-relative" style="z-index: 5;">
-        <h1 class="hero-title text-white mb-3" style="font-size: 4rem; letter-spacing: -0.02em;">Program Kami</h1>
-        <p class="text-white opacity-75" style="font-size: 1.2rem; max-width: 600px; margin: 0 auto;">
+        <h1 class="hero-title text-white mb-3" style="font-size: clamp(2rem, 8vw, 4rem); letter-spacing: -0.02em;">Program Kami</h1>
+        <p class="text-white opacity-75" style="font-size: clamp(0.9rem, 3vw, 1.2rem); max-width: 600px; margin: 0 auto;">
             Menjadi ruang bagi generasi muda Indonesia untuk berkontribusi dalam pembangunan bangsa melalui empat pilar program kerja kami.
         </p>
     </div>

@@ -5,7 +5,7 @@
 @section('header-content')
     <!-- Page Header -->
     <div class="text-center py-5 mt-5 position-relative" style="z-index: 5;">
-        <h1 class="hero-title text-white mb-5" style="font-size: 3.2rem; letter-spacing: -0.02em;">{{ $appSettings->tentang_hero_title ?? 'Inspirasi Muda, Cita untuk Indonesia' }}</h1>
+        <h1 class="hero-title text-white mb-5" style="font-size: clamp(1.8rem, 6vw, 3.2rem); letter-spacing: -0.02em;">{{ $appSettings->tentang_hero_title ?? 'Inspirasi Muda, Cita untuk Indonesia' }}</h1>
 
         <div class="position-relative mt-5 hero-image-card">
             @php

@@ -4,8 +4,8 @@
 
 @section('header-content')
     <div class="text-center py-5 mt-4 position-relative" style="z-index: 5;">
-        <h1 class="hero-title text-white mb-3" style="font-size: 3.2rem;">Kegiatan {{ ucfirst($type) }}</h1>
-        <p class="text-white opacity-75" style="font-size: 1.1rem; max-width: 640px; margin: 0 auto;">
+        <h1 class="hero-title text-white mb-3" style="font-size: clamp(1.8rem, 6vw, 3.2rem);">Kegiatan {{ ucfirst($type) }}</h1>
+        <p class="text-white opacity-75" style="font-size: clamp(0.9rem, 3vw, 1.1rem); max-width: 640px; margin: 0 auto;">
             Daftar kegiatan yang terkait dengan pilar program {{ ucfirst($type) }}.
         </p>
     </div>
