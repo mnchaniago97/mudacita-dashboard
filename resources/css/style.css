@@ -14,12 +14,8 @@ body {
     overflow-x: hidden;
 }
 
-/* Mobile Margins */
+/* Mobile Margins - Content only */
 @media (max-width: 575.98px) {
-    body {
-        padding-left: 12px;
-        padding-right: 12px;
-    }
     .container {
         padding-left: 12px;
         padding-right: 12px;
