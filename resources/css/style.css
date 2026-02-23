@@ -14,6 +14,18 @@ body {
     overflow-x: hidden;
 }
 
+/* Mobile Margins */
+@media (max-width: 575.98px) {
+    body {
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+    .container {
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+}
+
 /* Decorative Elements */
 .header-wrapper {
     background-color: var(--primary-color);
