@@ -23,7 +23,7 @@
             </div>
             <div class="col-lg-6 mt-4 mt-lg-0">
                 <div class="hero-image-wrapper">
-                    <img src="{{ $appSettings->hero_image_path ? asset('storage/' . $appSettings->hero_image_path) : asset('assets/images/banner/3.jpg') }}" class="img-fluid rounded-4 shadow-sm w-100" alt="Hero Image">
+                    <img src="{{ $appSettings->hero_image_path ? asset('storage/' . $appSettings->hero_image_path) : asset('assets/images/banner/mudacita1.jpg') }}" class="img-fluid rounded-4 shadow-sm w-100" alt="Hero Image">
                     <div class="hero-social-card shadow-sm">
                         <a href="#" class="hero-social-btn" aria-label="Instagram">
                             <i class="feather-instagram"></i>
@@ -58,7 +58,7 @@
                     </div>
                 </div>
                 <div class="col-lg-6 order-2 order-lg-2 mb-5 mb-lg-0">
-                    <img src="{{ $appSettings->about_image_path ? asset('storage/' . $appSettings->about_image_path) : asset('assets/images/banner/3.jpg') }}" class="img-fluid rounded-4 w-100" alt="">
+                    <img src="{{ $appSettings->about_image_path ? asset('storage/' . $appSettings->about_image_path) : asset('assets/images/banner/mudacita1.jpg') }}" class="img-fluid rounded-4 w-100" alt="">
                 </div>
             </div>
         </div>
@@ -170,7 +170,6 @@
 
     <!-- Pillars -->
     <section class="pillars-section">
-        <div class="decor-blob blob-3"></div>
         <div class="decor-blob blob-4"></div>
         <div class="container text-center mb-5 pb-4">
             <h2 class="section-title text-white">Empat Pilar Muda Cita Indonesia</h2>
