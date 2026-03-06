@@ -43,10 +43,6 @@
                                                     <div>{{ $recruitment->phone ?? '-' }}</div>
                                                 </div>
                                                 <div class="col-md-6">
-                                                    <div class="fw-semibold">Jabatan</div>
-                                                    <div>{{ $recruitment->jabatan }}</div>
-                                                </div>
-                                                <div class="col-md-6">
                                                     <div class="fw-semibold">Divisi</div>
                                                     <div>{{ ucfirst($recruitment->divisi) }}</div>
                                                 </div>
@@ -85,6 +81,37 @@
                                                     <div class="fw-semibold">Motivasi</div>
                                                     <div>{{ $recruitment->motivasi ?? '-' }}</div>
                                                 </div>
+                                                @if ($recruitment->pas_foto)
+                                                <div class="col-12">
+                                                    <div class="fw-semibold">Pas Foto</div>
+                                                    <div>
+                                                        <img src="{{ asset('storage/' . $recruitment->pas_foto) }}" alt="Pas Foto" class="img-thumbnail" style="max-height: 200px;">
+                                                    </div>
+                                                </div>
+                                                @endif
+                                                @if ($recruitment->screenshot_bukti)
+                                                <div class="col-12">
+                                                    <div class="fw-semibold">Screenshot Bukti</div>
+                                                    <div class="d-flex gap-2 flex-wrap">
+                                                        @php
+                                                            $buktiFiles = is_array($recruitment->screenshot_bukti) ? $recruitment->screenshot_bukti : json_decode($recruitment->screenshot_bukti, true);
+                                                        @endphp
+                                                        @if($buktiFiles)
+                                                            @foreach($buktiFiles as $file)
+                                                                <img src="{{ asset('storage/' . $file) }}" alt="Screenshot Bukti" class="img-thumbnail" style="max-height: 150px;">
+                                                            @endforeach
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                                @endif
+                                                @if ($recruitment->cv)
+                                                <div class="col-12">
+                                                    <div class="fw-semibold">CV (Lampiran)</div>
+                                                    <div>
+                                                        <a href="{{ asset('storage/' . $recruitment->cv) }}" target="_blank" class="btn btn-sm btn-info">Lihat CV</a>
+                                                    </div>
+                                                </div>
+                                                @endif
                                                 @if ($recruitment->status_recruitment === 'rejected')
                                                     <div class="col-12">
                                                         <div class="fw-semibold">Alasan Penolakan</div>

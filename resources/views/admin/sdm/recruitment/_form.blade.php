@@ -57,20 +57,6 @@
         </div>
 
         <div class="col-md-6">
-            <label class="form-label">Jabatan</label>
-            <input
-                type="text"
-                name="jabatan"
-                class="form-control @error('jabatan') is-invalid @enderror"
-                value="{{ old('jabatan', $recruitment->jabatan ?? '') }}"
-                required
-            >
-            @error('jabatan')
-                <div class="invalid-feedback">{{ $message }}</div>
-            @enderror
-        </div>
-
-        <div class="col-md-6">
             <label class="form-label">Divisi</label>
             <select
                 name="divisi"
@@ -159,6 +145,83 @@
                 rows="3"
             >{{ old('motivasi', $recruitment->motivasi ?? '') }}</textarea>
             @error('motivasi')
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+        </div>
+
+        @if ($isEdit && $recruitment->pas_foto)
+        <div class="col-12">
+            <label class="form-label">Pas Foto Saat Ini</label>
+            <div>
+                <img src="{{ asset('storage/' . $recruitment->pas_foto) }}" alt="Pas Foto" class="img-thumbnail" style="max-height: 200px;">
+            </div>
+        </div>
+        @endif
+
+        <div class="col-md-6">
+            <label class="form-label">Pas Foto</label>
+            <input
+                type="file"
+                name="pas_foto"
+                class="form-control @error('pas_foto') is-invalid @enderror"
+                accept="image/*"
+            >
+            <small class="text-muted">Format: JPG, PNG (max 2MB)</small>
+            @error('pas_foto')
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+        </div>
+
+        @if ($isEdit && $recruitment->screenshot_bukti)
+        <div class="col-12">
+            <label class="form-label">Screenshot Bukti Saat Ini</label>
+            <div class="d-flex gap-2 flex-wrap">
+                @php
+                    $buktiFiles = is_array($recruitment->screenshot_bukti) ? $recruitment->screenshot_bukti : json_decode($recruitment->screenshot_bukti, true);
+                @endphp
+                @if($buktiFiles)
+                    @foreach($buktiFiles as $file)
+                        <img src="{{ asset('storage/' . $file) }}" alt="Screenshot Bukti" class="img-thumbnail" style="max-height: 150px;">
+                    @endforeach
+                @endif
+            </div>
+        </div>
+        @endif
+
+        <div class="col-md-6">
+            <label class="form-label">Screenshot Bukti</label>
+            <input
+                type="file"
+                name="screenshot_bukti[]"
+                class="form-control @error('screenshot_bukti') is-invalid @enderror"
+                accept="image/*"
+                multiple
+            >
+            <small class="text-muted">Screenshot follow IG dan share post (bisa lebih dari 1)</small>
+            @error('screenshot_bukti')
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+        </div>
+
+        @if ($isEdit && $recruitment->cv)
+        <div class="col-12">
+            <label class="form-label">CV Saat Ini</label>
+            <div>
+                <a href="{{ asset('storage/' . $recruitment->cv) }}" target="_blank" class="btn btn-sm btn-info">Lihat CV</a>
+            </div>
+        </div>
+        @endif
+
+        <div class="col-md-6">
+            <label class="form-label">CV (Lampiran)</label>
+            <input
+                type="file"
+                name="cv"
+                class="form-control @error('cv') is-invalid @enderror"
+                accept=".pdf,.doc,.docx"
+            >
+            <small class="text-muted">Format: PDF, DOC, DOCX (max 5MB)</small>
+            @error('cv')
                 <div class="invalid-feedback">{{ $message }}</div>
             @enderror
         </div>

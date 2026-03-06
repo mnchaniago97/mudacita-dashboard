@@ -34,7 +34,6 @@
                                                 <th>Nama</th>
                                                 <th>Email</th>
                                                 <th>Divisi</th>
-                                                <th>Jabatan</th>
                                                 <th>Status</th>
                                                 <th class="text-end">Actions</th>
                                             </tr>
@@ -46,7 +45,6 @@
                                                     <td>{{ $item->name }}</td>
                                                     <td>{{ $item->email }}</td>
                                                     <td>{{ ucfirst($item->divisi) }}</td>
-                                                    <td>{{ $item->jabatan }}</td>
                                                     <td>
                                                         @php
                                                             $badgeClass = match ($item->status_recruitment) {
@@ -101,7 +99,7 @@
                                                 </tr>
                                             @empty
                                                 <tr>
-                                                    <td colspan="7" class="text-center text-muted py-4">
+                                                    <td colspan="6" class="text-center text-muted py-4">
                                                         Belum ada data recruitment
                                                     </td>
                                                 </tr>

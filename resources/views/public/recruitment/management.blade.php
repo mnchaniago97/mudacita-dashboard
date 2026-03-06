@@ -66,19 +66,6 @@
                             </div>
 
                             <div class="col-md-6">
-                                <label class="form-label">Jabatan</label>
-                                <input
-                                    type="text"
-                                    name="jabatan"
-                                    class="form-control @error('jabatan') is-invalid @enderror"
-                                    value="{{ old('jabatan') }}"
-                                    placeholder="Contoh: Koordinator Program"
-                                    required
-                                >
-                                @error('jabatan')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                            </div>
-
-                            <div class="col-md-6">
                                 <label class="form-label">Divisi</label>
                                 <select
                                     name="divisi"
@@ -155,6 +142,43 @@
                                     placeholder="Jelaskan alasan ingin bergabung"
                                 >{{ old('motivasi') }}</textarea>
                                 @error('motivasi')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label">Pas Foto</label>
+                                <input
+                                    type="file"
+                                    name="pas_foto"
+                                    class="form-control @error('pas_foto') is-invalid @enderror"
+                                    accept="image/*"
+                                >
+                                <small class="text-muted">Format: JPG, PNG (max 2MB)</small>
+                                @error('pas_foto')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label">Screenshot Bukti</label>
+                                <input
+                                    type="file"
+                                    name="screenshot_bukti[]"
+                                    class="form-control @error('screenshot_bukti') is-invalid @enderror"
+                                    accept="image/*"
+                                    multiple
+                                >
+                                <small class="text-muted">Screenshot follow IG dan share post (bisa lebih dari 1)</small>
+                                @error('screenshot_bukti')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label">CV</label>
+                                <input
+                                    type="file"
+                                    name="cv"
+                                    class="form-control @error('cv') is-invalid @enderror"
+                                    accept=".pdf,.doc,.docx"
+                                >
+                                <small class="text-muted">Format: PDF, DOC, DOCX (max 5MB)</small>
+                                @error('cv')<div class="invalid-feedback">{{ $message }}</div>@enderror
                             </div>
 
                         </div>
