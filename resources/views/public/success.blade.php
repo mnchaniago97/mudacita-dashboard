@@ -36,6 +36,11 @@
                                     <i class="feather-check"></i>
                                 </div>
                                 <h3 class="mb-2">Pendaftaran berhasil</h3>
+                                @if(session('success'))
+                                    <div class="alert alert-success mb-4">
+                                        {{ session('success') }}
+                                    </div>
+                                @endif
                                 <p class="text-muted mb-4">
                                     Pendaftaran {{ request('type') === 'volunteer' ? 'Volunteer' : 'Management' }} sudah kami terima.
                                     Tim kami akan meninjau dan menghubungi Anda.

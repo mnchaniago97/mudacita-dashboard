@@ -149,11 +149,11 @@
             @enderror
         </div>
 
-        @if ($isEdit && $recruitment->pas_foto)
+        @if ($isEdit && $recruitment->photo_path)
         <div class="col-12">
             <label class="form-label">Pas Foto Saat Ini</label>
             <div>
-                <img src="{{ asset('storage/' . $recruitment->pas_foto) }}" alt="Pas Foto" class="img-thumbnail" style="max-height: 200px;">
+                <img src="{{ asset('storage/' . $recruitment->photo_path) }}" alt="Pas Foto" class="img-thumbnail" style="max-height: 200px;">
             </div>
         </div>
         @endif
@@ -172,12 +172,12 @@
             @enderror
         </div>
 
-        @if ($isEdit && $recruitment->screenshot_bukti)
+        @if ($isEdit && $recruitment->screenshot_path)
         <div class="col-12">
             <label class="form-label">Screenshot Bukti Saat Ini</label>
             <div class="d-flex gap-2 flex-wrap">
                 @php
-                    $buktiFiles = is_array($recruitment->screenshot_bukti) ? $recruitment->screenshot_bukti : json_decode($recruitment->screenshot_bukti, true);
+                    $buktiFiles = is_array($recruitment->screenshot_path) ? $recruitment->screenshot_path : json_decode($recruitment->screenshot_path, true);
                 @endphp
                 @if($buktiFiles)
                     @foreach($buktiFiles as $file)
@@ -203,11 +203,11 @@
             @enderror
         </div>
 
-        @if ($isEdit && $recruitment->cv)
+        @if ($isEdit && $recruitment->cv_path)
         <div class="col-12">
             <label class="form-label">CV Saat Ini</label>
             <div>
-                <a href="{{ asset('storage/' . $recruitment->cv) }}" target="_blank" class="btn btn-sm btn-info">Lihat CV</a>
+                <a href="{{ asset('storage/' . $recruitment->cv_path) }}" target="_blank" class="btn btn-sm btn-info">Lihat CV</a>
             </div>
         </div>
         @endif

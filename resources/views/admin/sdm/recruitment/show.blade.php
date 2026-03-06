@@ -81,20 +81,20 @@
                                                     <div class="fw-semibold">Motivasi</div>
                                                     <div>{{ $recruitment->motivasi ?? '-' }}</div>
                                                 </div>
-                                                @if ($recruitment->pas_foto)
+                                                @if ($recruitment->photo_path)
                                                 <div class="col-12">
                                                     <div class="fw-semibold">Pas Foto</div>
                                                     <div>
-                                                        <img src="{{ asset('storage/' . $recruitment->pas_foto) }}" alt="Pas Foto" class="img-thumbnail" style="max-height: 200px;">
+                                                        <img src="{{ asset('storage/' . $recruitment->photo_path) }}" alt="Pas Foto" class="img-thumbnail" style="max-height: 200px;">
                                                     </div>
                                                 </div>
                                                 @endif
-                                                @if ($recruitment->screenshot_bukti)
+                                                @if ($recruitment->screenshot_path)
                                                 <div class="col-12">
                                                     <div class="fw-semibold">Screenshot Bukti</div>
                                                     <div class="d-flex gap-2 flex-wrap">
                                                         @php
-                                                            $buktiFiles = is_array($recruitment->screenshot_bukti) ? $recruitment->screenshot_bukti : json_decode($recruitment->screenshot_bukti, true);
+                                                            $buktiFiles = is_array($recruitment->screenshot_path) ? $recruitment->screenshot_path : json_decode($recruitment->screenshot_path, true);
                                                         @endphp
                                                         @if($buktiFiles)
                                                             @foreach($buktiFiles as $file)
@@ -104,11 +104,11 @@
                                                     </div>
                                                 </div>
                                                 @endif
-                                                @if ($recruitment->cv)
+                                                @if ($recruitment->cv_path)
                                                 <div class="col-12">
                                                     <div class="fw-semibold">CV (Lampiran)</div>
                                                     <div>
-                                                        <a href="{{ asset('storage/' . $recruitment->cv) }}" target="_blank" class="btn btn-sm btn-info">Lihat CV</a>
+                                                        <a href="{{ asset('storage/' . $recruitment->cv_path) }}" target="_blank" class="btn btn-sm btn-info">Lihat CV</a>
                                                     </div>
                                                 </div>
                                                 @endif
