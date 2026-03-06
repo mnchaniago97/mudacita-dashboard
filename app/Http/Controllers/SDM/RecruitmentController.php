@@ -29,25 +29,25 @@ class RecruitmentController extends Controller
         $isPublicForm = !$request->user();
         
         $rules = [
-            'name' => ['required', 'string'],
-            'email' => ['required', 'email', 'unique:recruitments,email'],
-            'phone' => ['nullable', 'string'],
-            'divisi' => ['required', Rule::in(['program', 'riset', 'media'])],
-            'alamat_lengkap' => ['nullable', 'string'],
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email', 'max:255', 'unique:recruitments,email'],
+            'phone' => ['nullable', 'string', 'max:20'],
+            'divisi' => ['required', 'string', 'in:program,riset,media'],
+            'alamat_lengkap' => ['nullable', 'string', 'max:500'],
             'tanggal_lahir' => ['nullable', 'date'],
-            'jenis_kelamin' => ['nullable', Rule::in(['laki-laki', 'perempuan'])],
-            'pendidikan_terakhir' => ['nullable', 'string'],
-            'motivasi' => ['nullable', 'string'],
-            'pas_foto' => ['nullable', 'image', 'max:2048'],
-            'screenshot_bukti.*' => ['nullable', 'image', 'max:2048'],
-            'cv' => ['nullable', 'file', 'max:5120'],
+            'jenis_kelamin' => ['nullable', 'string', 'in:laki-laki,perempuan'],
+            'pendidikan_terakhir' => ['nullable', 'string', 'max:255'],
+            'motivasi' => ['nullable', 'string', 'max:1000'],
+            'pas_foto' => ['nullable', 'file', 'image', 'max:2048'],
+            'screenshot_bukti' => ['nullable'],
+            'cv' => ['nullable', 'file', 'mimes:pdf,doc,docx', 'max:5120'],
         ];
         
         // Add jabatan requirement only for admin
         if (!$isPublicForm) {
-            $rules['jabatan'] = ['required', 'string'];
+            $rules['jabatan'] = ['required', 'string', 'max:100'];
         } else {
-            $rules['jabatan'] = ['nullable', 'string'];
+            $rules['jabatan'] = ['nullable', 'string', 'max:100'];
         }
         
         $validated = $request->validate($rules);
@@ -57,39 +57,44 @@ class RecruitmentController extends Controller
         $screenshotPaths = null;
         $cvPath = null;
 
-        if ($request->hasFile('pas_foto')) {
-            $photoPath = $request->file('pas_foto')->store('recruitments/photos', 'public');
-        }
-
-        if ($request->hasFile('screenshot_bukti')) {
-            $screenshots = [];
-            foreach ($request->file('screenshot_bukti') as $screenshot) {
-                $screenshots[] = $screenshot->store('recruitments/screenshots', 'public');
+        try {
+            if ($request->hasFile('pas_foto')) {
+                $photoPath = $request->file('pas_foto')->store('recruitments/photos', 'public');
             }
-            $screenshotPaths = json_encode($screenshots);
-        }
 
-        if ($request->hasFile('cv')) {
-            $cvPath = $request->file('cv')->store('recruitments/cvs', 'public');
-        }
+            if ($request->hasFile('screenshot_bukti')) {
+                $screenshots = [];
+                foreach ($request->file('screenshot_bukti') as $screenshot) {
+                    $screenshots[] = $screenshot->store('recruitments/screenshots', 'public');
+                }
+                $screenshotPaths = json_encode($screenshots);
+            }
 
-        $recruitment = Recruitment::create([
-            'name' => $validated['name'],
-            'email' => $validated['email'],
-            'phone' => $validated['phone'] ?? null,
-            'jabatan' => $validated['jabatan'] ?? 'Anggota',
-            'divisi' => $validated['divisi'],
-            'alamat_lengkap' => $validated['alamat_lengkap'] ?? null,
-            'photo_path' => $photoPath,
-            'screenshot_path' => $screenshotPaths,
-            'cv_path' => $cvPath,
-            'tanggal_lahir' => $validated['tanggal_lahir'] ?? null,
-            'jenis_kelamin' => $validated['jenis_kelamin'] ?? null,
-            'pendidikan_terakhir' => $validated['pendidikan_terakhir'] ?? null,
-            'motivasi' => $validated['motivasi'] ?? null,
-            'status_recruitment' => 'pending',
-            'applied_at' => now(),
-        ]);
+            if ($request->hasFile('cv')) {
+                $cvPath = $request->file('cv')->store('recruitments/cvs', 'public');
+            }
+
+            $recruitment = Recruitment::create([
+                'name' => $validated['name'],
+                'email' => $validated['email'],
+                'phone' => $validated['phone'] ?? null,
+                'jabatan' => $validated['jabatan'] ?? 'Anggota',
+                'divisi' => $validated['divisi'],
+                'alamat_lengkap' => $validated['alamat_lengkap'] ?? null,
+                'photo_path' => $photoPath,
+                'screenshot_path' => $screenshotPaths,
+                'cv_path' => $cvPath,
+                'tanggal_lahir' => $validated['tanggal_lahir'] ?? null,
+                'jenis_kelamin' => $validated['jenis_kelamin'] ?? null,
+                'pendidikan_terakhir' => $validated['pendidikan_terakhir'] ?? null,
+                'motivasi' => $validated['motivasi'] ?? null,
+                'status_recruitment' => 'pending',
+                'applied_at' => now(),
+            ]);
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Recruitment store error: ' . $e->getMessage());
+            throw $e;
+        }
 
         $message = implode("\n", array_filter([
             'Pendaftaran Pengurus Baru',
@@ -100,7 +105,10 @@ class RecruitmentController extends Controller
         ]));
         app(WhatsAppService::class)->sendToManagement($message);
 
-        if (!auth()->check()) {
+        // Check if it's a public form submission by checking the request URI
+        $isPublicRoute = $request->is('recruitment/management') || $request->is('recruitment/volunteer');
+        
+        if ($isPublicRoute) {
             return redirect()
                 ->route('public.recruitment.success', ['type' => 'management'])
                 ->with('success', 'Pendaftaran berhasil. Tim kami akan menghubungi Anda.');
