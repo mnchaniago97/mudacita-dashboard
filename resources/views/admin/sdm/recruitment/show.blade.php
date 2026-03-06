@@ -121,18 +121,19 @@
                                     </div>
                                 </div>
 
-                                @if ($recruitment->status_recruitment === 'pending')
-                                    <div class="mt-4 d-flex gap-2">
+                                <div class="mt-4 d-flex gap-2">
+                                    @if ($recruitment->status_recruitment === 'pending')
                                         <form action="{{ route('sdm.recruitment.approve', $recruitment) }}" method="POST">
                                             @csrf
-                                            <button class="btn btn-success">Terima</button>
+                                            <button class="btn btn-sm btn-success">Terima</button>
                                         </form>
                                         <form action="{{ route('sdm.recruitment.reject', $recruitment) }}" method="POST">
                                             @csrf
-                                            <button class="btn btn-danger">Tolak</button>
+                                            <button class="btn btn-sm btn-danger">Tolak</button>
                                         </form>
-                                    </div>
-                                @endif
+                                    @endif
+                                    <a href="{{ route('sdm.recruitment.index') }}" class="btn btn-light btn-sm">Kembali</a>
+                                </div>
                             </div>
                         </div>
                     </div>

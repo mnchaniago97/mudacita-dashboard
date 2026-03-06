@@ -70,6 +70,11 @@ class ManagementController extends Controller
         return view('admin.sdm.management.edit', compact('management'));
     }
 
+    public function show(Management $management)
+    {
+        return view('admin.sdm.management.show', compact('management'));
+    }
+
     public function update(Request $request, Management $management)
     {
         $request->validate([

@@ -95,6 +95,10 @@
 
                                             <td class="text-end">
                                                 <div class="hstack gap-2 justify-content-end">
+                                                    <a href="{{ route('sdm.management.show', $item) }}" class="avatar-text avatar-md" title="Detail">
+                                                        <i class="feather-eye"></i>
+                                                    </a>
+
                                                     <a href="{{ route('sdm.management.edit', $item) }}" class="avatar-text avatar-md">
                                                         <i class="feather-edit"></i>
                                                     </a>
