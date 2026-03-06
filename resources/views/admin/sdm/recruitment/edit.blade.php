@@ -10,7 +10,7 @@
                 <div class="col-xl-11 col-lg-9 col-md-10">
                     <div class="card">
                         <div class="card-body">
-                            @include('sdm.recruitment._form', ['recruitment' => $recruitment])
+                            @include('admin.sdm.recruitment._form', ['recruitment' => $recruitment])
                         </div>
                     </div>
                 </div>

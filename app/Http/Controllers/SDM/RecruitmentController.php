@@ -25,76 +25,63 @@ class RecruitmentController extends Controller
 
     public function store(Request $request)
     {
-        // For public form, don't require jabatan
-        $isPublicForm = !$request->user();
-        
-        $rules = [
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'max:255', 'unique:recruitments,email'],
-            'phone' => ['nullable', 'string', 'max:20'],
-            'divisi' => ['required', 'string', 'in:program,riset,media'],
-            'alamat_lengkap' => ['nullable', 'string', 'max:500'],
+        $validated = $request->validate([
+            'name' => ['required', 'string'],
+            'email' => ['required', 'email', 'unique:recruitments,email'],
+            'phone' => ['nullable', 'string'],
+            'jabatan' => ['required', 'string'],
+            'divisi' => ['required', Rule::in(['program', 'riset', 'media'])],
+            'alamat_lengkap' => ['nullable', 'string'],
             'tanggal_lahir' => ['nullable', 'date'],
-            'jenis_kelamin' => ['nullable', 'string', 'in:laki-laki,perempuan'],
-            'pendidikan_terakhir' => ['nullable', 'string', 'max:255'],
-            'motivasi' => ['nullable', 'string', 'max:1000'],
-            'pas_foto' => ['nullable', 'file', 'image', 'max:2048'],
-            'screenshot_bukti' => ['nullable'],
+            'jenis_kelamin' => ['nullable', Rule::in(['laki-laki', 'perempuan'])],
+            'pendidikan_terakhir' => ['nullable', 'string'],
+            'motivasi' => ['nullable', 'string'],
+            'pas_foto' => ['nullable', 'image', 'max:2048'],
+            'screenshot_bukti' => ['nullable', 'array'],
+            'screenshot_bukti.*' => ['image', 'max:2048'],
             'cv' => ['nullable', 'file', 'mimes:pdf,doc,docx', 'max:5120'],
-        ];
-        
-        // Add jabatan requirement only for admin
-        if (!$isPublicForm) {
-            $rules['jabatan'] = ['required', 'string', 'max:100'];
-        } else {
-            $rules['jabatan'] = ['nullable', 'string', 'max:100'];
-        }
-        
-        $validated = $request->validate($rules);
+        ]);
 
-        // Handle file uploads
-        $photoPath = null;
-        $screenshotPaths = null;
+        $pasFotoPath = null;
+        $screenshotBuktiPath = null;
         $cvPath = null;
 
-        try {
-            if ($request->hasFile('pas_foto')) {
-                $photoPath = $request->file('pas_foto')->store('recruitments/photos', 'public');
-            }
-
-            if ($request->hasFile('screenshot_bukti')) {
-                $screenshots = [];
-                foreach ($request->file('screenshot_bukti') as $screenshot) {
-                    $screenshots[] = $screenshot->store('recruitments/screenshots', 'public');
-                }
-                $screenshotPaths = json_encode($screenshots);
-            }
-
-            if ($request->hasFile('cv')) {
-                $cvPath = $request->file('cv')->store('recruitments/cvs', 'public');
-            }
-
-            $recruitment = Recruitment::create([
-                'name' => $validated['name'],
-                'email' => $validated['email'],
-                'phone' => $validated['phone'] ?? null,
-                'jabatan' => $validated['jabatan'] ?? 'Anggota',
-                'divisi' => $validated['divisi'],
-                'alamat_lengkap' => $validated['alamat_lengkap'] ?? null,
-                'photo_path' => $photoPath,
-                'screenshot_path' => $screenshotPaths,
-                'cv_path' => $cvPath,
-                'tanggal_lahir' => $validated['tanggal_lahir'] ?? null,
-                'jenis_kelamin' => $validated['jenis_kelamin'] ?? null,
-                'pendidikan_terakhir' => $validated['pendidikan_terakhir'] ?? null,
-                'motivasi' => $validated['motivasi'] ?? null,
-                'status_recruitment' => 'pending',
-                'applied_at' => now(),
-            ]);
-        } catch (\Exception $e) {
-            \Illuminate\Support\Facades\Log::error('Recruitment store error: ' . $e->getMessage());
-            throw $e;
+        // Handle pas_foto upload
+        if ($request->hasFile('pas_foto')) {
+            $pasFotoPath = $request->file('pas_foto')->store('recruitments/pas-foto', 'public');
         }
+
+        // Handle screenshot_bukti upload (multiple files - store as JSON)
+        if ($request->hasFile('screenshot_bukti')) {
+            $screenshotPaths = [];
+            foreach ($request->file('screenshot_bukti') as $file) {
+                $screenshotPaths[] = $file->store('recruitments/screenshot', 'public');
+            }
+            $screenshotBuktiPath = json_encode($screenshotPaths);
+        }
+
+        // Handle cv upload
+        if ($request->hasFile('cv')) {
+            $cvPath = $request->file('cv')->store('recruitments/cv', 'public');
+        }
+
+        $recruitment = Recruitment::create([
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'phone' => $validated['phone'] ?? null,
+            'jabatan' => $validated['jabatan'],
+            'divisi' => $validated['divisi'],
+            'alamat_lengkap' => $validated['alamat_lengkap'] ?? null,
+            'photo_path' => $pasFotoPath,
+            'tanggal_lahir' => $validated['tanggal_lahir'] ?? null,
+            'jenis_kelamin' => $validated['jenis_kelamin'] ?? null,
+            'pendidikan_terakhir' => $validated['pendidikan_terakhir'] ?? null,
+            'motivasi' => $validated['motivasi'] ?? null,
+            'screenshot_path' => $screenshotBuktiPath,
+            'cv_path' => $cvPath,
+            'status_recruitment' => 'pending',
+            'applied_at' => now(),
+        ]);
 
         $message = implode("\n", array_filter([
             'Pendaftaran Pengurus Baru',
@@ -105,10 +92,7 @@ class RecruitmentController extends Controller
         ]));
         app(WhatsAppService::class)->sendToManagement($message);
 
-        // Check if it's a public form submission by checking the request URI
-        $isPublicRoute = $request->is('recruitment/management') || $request->is('recruitment/volunteer');
-        
-        if ($isPublicRoute) {
+        if (!auth()->check()) {
             return redirect()
                 ->route('public.recruitment.success', ['type' => 'management'])
                 ->with('success', 'Pendaftaran berhasil. Tim kami akan menghubungi Anda.');
@@ -142,13 +126,9 @@ class RecruitmentController extends Controller
             'jenis_kelamin' => ['nullable', Rule::in(['laki-laki', 'perempuan'])],
             'pendidikan_terakhir' => ['nullable', 'string'],
             'motivasi' => ['nullable', 'string'],
-            'pas_foto' => ['nullable', 'image', 'max:2048'],
-            'screenshot_bukti.*' => ['nullable', 'image', 'max:2048'],
-            'cv' => ['nullable', 'file', 'max:5120'],
         ]);
 
-        // Handle file uploads
-        $updateData = [
+        $recruitment->fill([
             'name' => $validated['name'],
             'email' => $validated['email'],
             'phone' => $validated['phone'] ?? null,
@@ -159,25 +139,8 @@ class RecruitmentController extends Controller
             'jenis_kelamin' => $validated['jenis_kelamin'] ?? null,
             'pendidikan_terakhir' => $validated['pendidikan_terakhir'] ?? null,
             'motivasi' => $validated['motivasi'] ?? null,
-        ];
+        ]);
 
-        if ($request->hasFile('pas_foto')) {
-            $updateData['photo_path'] = $request->file('pas_foto')->store('recruitments/photos', 'public');
-        }
-
-        if ($request->hasFile('screenshot_bukti')) {
-            $screenshots = [];
-            foreach ($request->file('screenshot_bukti') as $screenshot) {
-                $screenshots[] = $screenshot->store('recruitments/screenshots', 'public');
-            }
-            $updateData['screenshot_path'] = json_encode($screenshots);
-        }
-
-        if ($request->hasFile('cv')) {
-            $updateData['cv_path'] = $request->file('cv')->store('recruitments/cvs', 'public');
-        }
-
-        $recruitment->fill($updateData);
         $recruitment->save();
 
         return redirect()

@@ -26,6 +26,7 @@
 
                     <form method="POST" action="{{ route('public.recruitment.management.store') }}" enctype="multipart/form-data">
                         @csrf
+                        <input type="hidden" name="jabatan" value="Staff">
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label class="form-label">Nama</label>
