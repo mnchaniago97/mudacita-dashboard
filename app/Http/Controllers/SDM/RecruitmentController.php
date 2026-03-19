@@ -7,6 +7,7 @@ use App\Models\Management;
 use App\Models\Recruitment;
 use App\Services\WhatsAppService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 
 class RecruitmentController extends Controller
@@ -135,7 +136,59 @@ class RecruitmentController extends Controller
             'jenis_kelamin' => ['nullable', Rule::in(['laki-laki', 'perempuan'])],
             'pendidikan_terakhir' => ['nullable', 'string'],
             'motivasi' => ['nullable', 'string'],
+            'pas_foto' => ['nullable', 'file', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
+            'screenshot_bukti' => ['nullable', 'array', 'max:3'],
+            'screenshot_bukti.*' => ['file', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
+            'cv' => ['nullable', 'file', 'mimes:pdf,doc,docx', 'max:10240'],
+        ], [
+            'pas_foto.mimes' => 'Pas foto harus berformat JPG, JPEG, PNG, atau WEBP.',
+            'pas_foto.max' => 'Ukuran pas foto maksimal 5MB.',
+            'screenshot_bukti.array' => 'Screenshot bukti harus berupa daftar file.',
+            'screenshot_bukti.max' => 'Screenshot bukti maksimal 3 file.',
+            'screenshot_bukti.*.mimes' => 'Screenshot bukti harus berformat JPG, JPEG, PNG, atau WEBP.',
+            'screenshot_bukti.*.max' => 'Ukuran setiap screenshot bukti maksimal 5MB.',
+            'cv.mimes' => 'CV harus berformat PDF, DOC, atau DOCX.',
+            'cv.max' => 'Ukuran CV maksimal 10MB.',
         ]);
+
+        $photoPath = $recruitment->photo_path;
+        $screenshotPath = $recruitment->screenshot_path;
+        $cvPath = $recruitment->cv_path;
+
+        if ($request->hasFile('pas_foto')) {
+            if (!empty($photoPath)) {
+                Storage::disk('public')->delete($photoPath);
+            }
+            $photoPath = $request->file('pas_foto')->store('recruitments/pas-foto', 'public');
+        }
+
+        if ($request->hasFile('screenshot_bukti')) {
+            $existingScreenshots = json_decode((string) $recruitment->screenshot_path, true);
+
+            if (is_array($existingScreenshots)) {
+                foreach ($existingScreenshots as $path) {
+                    if (!empty($path)) {
+                        Storage::disk('public')->delete($path);
+                    }
+                }
+            } elseif (is_string($recruitment->screenshot_path) && !empty($recruitment->screenshot_path)) {
+                Storage::disk('public')->delete($recruitment->screenshot_path);
+            }
+
+            $newScreenshots = [];
+            foreach ($request->file('screenshot_bukti') as $file) {
+                $newScreenshots[] = $file->store('recruitments/screenshot', 'public');
+            }
+
+            $screenshotPath = json_encode($newScreenshots, JSON_UNESCAPED_SLASHES);
+        }
+
+        if ($request->hasFile('cv')) {
+            if (!empty($cvPath)) {
+                Storage::disk('public')->delete($cvPath);
+            }
+            $cvPath = $request->file('cv')->store('recruitments/cv', 'public');
+        }
 
         $recruitment->fill([
             'name' => $validated['name'],
@@ -148,6 +201,9 @@ class RecruitmentController extends Controller
             'jenis_kelamin' => $validated['jenis_kelamin'] ?? null,
             'pendidikan_terakhir' => $validated['pendidikan_terakhir'] ?? null,
             'motivasi' => $validated['motivasi'] ?? null,
+            'photo_path' => $photoPath,
+            'screenshot_path' => $screenshotPath,
+            'cv_path' => $cvPath,
         ]);
 
         $recruitment->save();
