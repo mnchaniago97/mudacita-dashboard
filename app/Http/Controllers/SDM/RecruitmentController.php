@@ -36,10 +36,19 @@ class RecruitmentController extends Controller
             'jenis_kelamin' => ['nullable', Rule::in(['laki-laki', 'perempuan'])],
             'pendidikan_terakhir' => ['nullable', 'string'],
             'motivasi' => ['nullable', 'string'],
-            'pas_foto' => ['nullable', 'image', 'max:2048'],
-            'screenshot_bukti' => ['nullable', 'array'],
-            'screenshot_bukti.*' => ['image', 'max:2048'],
-            'cv' => ['nullable', 'file', 'mimes:pdf,doc,docx', 'max:5120'],
+            'pas_foto' => ['nullable', 'file', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
+            'screenshot_bukti' => ['nullable', 'array', 'max:3'],
+            'screenshot_bukti.*' => ['file', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
+            'cv' => ['nullable', 'file', 'mimes:pdf,doc,docx', 'max:10240'],
+        ], [
+            'pas_foto.mimes' => 'Pas foto harus berformat JPG, JPEG, PNG, atau WEBP.',
+            'pas_foto.max' => 'Ukuran pas foto maksimal 5MB.',
+            'screenshot_bukti.array' => 'Screenshot bukti harus berupa daftar file.',
+            'screenshot_bukti.max' => 'Screenshot bukti maksimal 3 file.',
+            'screenshot_bukti.*.mimes' => 'Screenshot bukti harus berformat JPG, JPEG, PNG, atau WEBP.',
+            'screenshot_bukti.*.max' => 'Ukuran setiap screenshot bukti maksimal 5MB.',
+            'cv.mimes' => 'CV harus berformat PDF, DOC, atau DOCX.',
+            'cv.max' => 'Ukuran CV maksimal 10MB.',
         ]);
 
         $pasFotoPath = null;
@@ -57,7 +66,7 @@ class RecruitmentController extends Controller
             foreach ($request->file('screenshot_bukti') as $file) {
                 $screenshotPaths[] = $file->store('recruitments/screenshot', 'public');
             }
-            $screenshotBuktiPath = json_encode($screenshotPaths);
+            $screenshotBuktiPath = json_encode($screenshotPaths, JSON_UNESCAPED_SLASHES);
         }
 
         // Handle cv upload

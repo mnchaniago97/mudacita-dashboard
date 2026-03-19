@@ -24,6 +24,19 @@
                         <p class="text-muted mb-0">Lengkapi data di bawah ini untuk mendaftar.</p>
                     </div>
 
+                    @if (session('success'))
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            {{ session('success') }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    @endif
+
+                    @if ($errors->any())
+                        <div class="alert alert-danger" role="alert">
+                            Terdapat kesalahan pada pengisian form. Mohon periksa kembali kolom yang ditandai.
+                        </div>
+                    @endif
+
                     <form method="POST" action="{{ route('public.recruitment.management.store') }}" enctype="multipart/form-data">
                         @csrf
                         <input type="hidden" name="jabatan" value="Staff">
@@ -151,23 +164,32 @@
                                     type="file"
                                     name="pas_foto"
                                     class="form-control @error('pas_foto') is-invalid @enderror"
-                                    accept="image/*"
+                                    accept=".jpg,.jpeg,.png,.webp,image/*"
                                 >
-                                <small class="text-muted">Format: JPG, PNG (max 2MB)</small>
+                                <small class="text-muted">Format: JPG, JPEG, PNG, WEBP (max 5MB)</small>
                                 @error('pas_foto')<div class="invalid-feedback">{{ $message }}</div>@enderror
                             </div>
 
                             <div class="col-md-6">
                                 <label class="form-label">Screenshot Bukti</label>
+                                @php
+                                    $screenshotErrors = $errors->get('screenshot_bukti.*');
+                                    $hasScreenshotError = $errors->has('screenshot_bukti') || !empty($screenshotErrors);
+                                @endphp
                                 <input
                                     type="file"
                                     name="screenshot_bukti[]"
-                                    class="form-control @error('screenshot_bukti') is-invalid @enderror"
-                                    accept="image/*"
+                                    class="form-control {{ $hasScreenshotError ? 'is-invalid' : '' }}"
+                                    accept=".jpg,.jpeg,.png,.webp,image/*"
                                     multiple
                                 >
-                                <small class="text-muted">Screenshot follow IG dan share post (bisa lebih dari 1)</small>
+                                <small class="text-muted">Screenshot follow IG dan share post (maksimal 3 file, tiap file max 5MB)</small>
                                 @error('screenshot_bukti')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                @foreach ($screenshotErrors as $messages)
+                                    @foreach ($messages as $message)
+                                        <div class="invalid-feedback d-block">{{ $message }}</div>
+                                    @endforeach
+                                @endforeach
                             </div>
 
                             <div class="col-md-6">
@@ -176,9 +198,9 @@
                                     type="file"
                                     name="cv"
                                     class="form-control @error('cv') is-invalid @enderror"
-                                    accept=".pdf,.doc,.docx"
+                                    accept=".pdf,.doc,.docx,application/pdf"
                                 >
-                                <small class="text-muted">Format: PDF, DOC, DOCX (max 5MB)</small>
+                                <small class="text-muted">Format: PDF, DOC, DOCX (max 10MB)</small>
                                 @error('cv')<div class="invalid-feedback">{{ $message }}</div>@enderror
                             </div>
 

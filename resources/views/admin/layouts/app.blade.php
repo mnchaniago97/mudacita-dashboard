@@ -30,10 +30,10 @@
 
     <style>
         :root {
-            --app-footer-height: 72px;
+            --app-footer-height: 88px;
         }
         body {
-            padding-bottom: var(--app-footer-height);
+            padding-bottom: calc(var(--app-footer-height) + 12px);
         }
         .app-footer {
             margin-left: 280px;
@@ -45,7 +45,7 @@
             right: 0;
             bottom: 0;
             z-index: 1020;
-            height: var(--app-footer-height);
+            min-height: 72px;
             display: flex;
             align-items: center;
         }
@@ -57,12 +57,18 @@
         .minimenu .app-footer {
             margin-left: 100px;
         }
+        .nxl-container {
+            padding-bottom: calc(var(--app-footer-height) + 24px);
+        }
+        .nxl-container .nxl-content {
+            padding-bottom: calc(var(--app-footer-height) + 24px);
+        }
         .nxl-container .nxl-content .main-content {
-            padding-bottom: calc(var(--app-footer-height) + 20px);
+            padding-bottom: calc(var(--app-footer-height) + 40px);
         }
         @media (max-width: 1199.98px) {
             :root {
-                --app-footer-height: 80px;
+                --app-footer-height: 96px;
             }
             .app-footer {
                 margin-left: 0;
@@ -101,6 +107,23 @@
 <script src="{{ asset('assets/js/common-init.min.js') }}"></script>
 <script src="{{ asset('assets/js/theme-customizer-init.min.js') }}"></script>
 <script src="{{ asset('assets/js/bootstrap.min.js') }}"></script>
+<script>
+    (function () {
+        const root = document.documentElement;
+        const footer = document.querySelector('.app-footer');
+
+        if (!footer) return;
+
+        const updateFooterHeight = () => {
+            const height = Math.ceil(footer.getBoundingClientRect().height);
+            root.style.setProperty('--app-footer-height', `${height}px`);
+        };
+
+        updateFooterHeight();
+        window.addEventListener('load', updateFooterHeight);
+        window.addEventListener('resize', updateFooterHeight);
+    })();
+</script>
 
 @stack('scripts')
 
